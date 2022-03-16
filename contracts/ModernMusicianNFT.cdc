@@ -2,11 +2,31 @@
 // It is not part of the official standard but it assumed to be
 // very similar to how many NFTs would implement the core functionality.
 
-import NonFungibleToken from "./NonFungibleToken.cdc"
-import MetadataViews from "./MetadataViews.cdc"
+import NonFungibleToken from 0x631e88ae7f1d7c20
+import MetadataViews from 0x631e88ae7f1d7c20
+import FungibleToken from 0x9a0766d93b6608b7
+import FlowToken from 0x7e60df042a9c0868
 
 pub contract ModernMusicianNFT: NonFungibleToken {
 
+    pub struct UpcomingInfo {
+        pub let name: String
+        pub let description: String
+        pub let type: UInt8
+        pub let preOrderer: Address
+        init(
+            name: String,
+            description: String,
+            type: UInt8
+        ) {
+            self.name = name
+            self.description = description
+            self.type = type
+            self.preOrderer = ""
+        }
+    }
+
+    pub var waitingList: [UpcomingInfo]
     pub var totalSupply: UInt64
 
     pub event ContractInitialized()
@@ -23,17 +43,20 @@ pub contract ModernMusicianNFT: NonFungibleToken {
         pub let name: String
         pub let description: String
         pub let thumbnail: String
+        pub let preOrderer: Address
 
         init(
             id: UInt64,
             name: String,
             description: String,
             thumbnail: String,
+            preOrderer: Address,
         ) {
             self.id = id
             self.name = name
             self.description = description
             self.thumbnail = thumbnail
+            self.preOrderer = preOrderer
         }
     
         pub fun getViews(): [Type] {
@@ -77,6 +100,45 @@ pub contract ModernMusicianNFT: NonFungibleToken {
 
         init () {
             self.ownedNFTs <- {}
+        }
+
+        // buy bu an NFT from Contract Addcount
+        pub fun buy(receiver_id: Address, nftID: UInt64, from: @FungibleToken.Vault) {
+            let collectionRef = ModernMusicianNFT.account
+                .getCapability(ModernMusicianNFT.CollectionPublicPath)
+                .borrow<&{NonFungibleToken.CollectionPublic}>()
+                ?? panic("Could not borrow capability from public collection")
+
+            // Borrow a reference to a specific NFT in the collection
+            let buyingNFT = collectionRef.borrowNFT(id: id) ?? panic("Could not find NFT in the marketplace")
+
+            if(buyingNFT.preOrderer != "" && buyingNFT.preOrderer != receiver_id){
+                panic("This NFT has already been sold")
+            } elseif (buyingNFT.preOrderer != "" && buyingNFT.preOrderer != receiver_id){
+                if(buyingNFT.type == 0 && from.balance < 450.0){
+                    panic("You have to deposit more than 450.0 Flow")
+                }
+            } elseif (buyingNFT.preOrderer == ""){
+                if(buyingNFT.type == 0 && from.balance < 500.0){
+                    panic("You have to deposit more than 500.0 Flow")
+                } elseif(buyingNFT.type == 1 && from.balance < 5.0){
+                    panic("You have to deposit more than 5.0 Flow")
+                }
+            }
+
+            let marketplaceCollection: &ModernMusicianNFT.Collection = ModernMusicianNFT.account.borrow<&ModernMusicianNFT.Collection>(from: NonFungibleToken.CollectionStoragePath)
+                ?? panic("Could not borrow capability from storage collection")
+
+            let token <-marketplaceCollection.withdraw(id: nftID) ?? panic("Failed to Withdraw NFT")
+
+            // borrow a public reference to the receivers collection
+            let depositRef = getAccount(receiver_id)
+                .getCapability(ModernMusicianNFT.CollectionPublicPath)
+                .borrow<&{NonFungibleToken.CollectionPublic}>()
+                ?? panic("Could not borrow a reference to the receiver's collection")
+
+            // Deposit the NFT in the recipient's collection
+            depositRef.deposit(token: <-token)
         }
 
         // withdraw removes an NFT from the collection and moves it to the caller
@@ -152,7 +214,11 @@ pub contract ModernMusicianNFT: NonFungibleToken {
             name: String,
             description: String,
             thumbnail: String,
+            waitListIndex: UInt64
         ) {
+            if(waitingList.length <= waitListIndex){
+                panic("NFT is not exist in waiting list")
+            }
 
             // create a new NFT
             var newNFT <- create NFT(
@@ -160,13 +226,25 @@ pub contract ModernMusicianNFT: NonFungibleToken {
                 name: name,
                 description: description,
                 thumbnail: thumbnail,
+                preOrderer: waitingList[waitListIndex].preOrderer
             )
 
             // deposit it in the recipient's account using their reference
             recipient.deposit(token: <-newNFT)
 
+            self.waitingList.remove(at: waitListIndex);
+
             ModernMusicianNFT.totalSupply = ModernMusicianNFT.totalSupply + UInt64(1)
         }
+
+        pub fun addUpcomingInfo(info: UpcomingInfo){
+            self.waitingList.append(info);
+        }
+
+        pub fun removeUpcomingInfo(index: UInt64){
+            self.waitingList.remove(at: index);
+        }
+
     }
 
     init() {
