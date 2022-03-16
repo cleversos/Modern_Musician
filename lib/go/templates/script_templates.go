@@ -16,29 +16,29 @@ const (
 // GenerateBorrowNFTScript creates a script that retrieves an NFT collection
 // from storage and tries to borrow a reference for an NFT that it owns.
 // If it owns it, it will not fail.
-func GenerateBorrowNFTScript(nftAddress, exampleNFTAddress flow.Address) []byte {
+func GenerateBorrowNFTScript(nftAddress, ModernMusicianNFTAddress flow.Address) []byte {
 	code := assets.MustAssetString(filenameBorrowNFT)
-	return replaceAddresses(code, nftAddress, exampleNFTAddress, flow.EmptyAddress)
+	return replaceAddresses(code, nftAddress, ModernMusicianNFTAddress, flow.EmptyAddress)
 }
 
 // GenerateGetNFTMetadataScript creates a script that returns the metadata for an NFT.
-func GenerateGetNFTMetadataScript(nftAddress, exampleNFTAddress, metadataAddress flow.Address) []byte {
+func GenerateGetNFTMetadataScript(nftAddress, ModernMusicianNFTAddress, metadataAddress flow.Address) []byte {
 	code := assets.MustAssetString(filenameGetNFTMetadata)
-	return replaceAddresses(code, nftAddress, exampleNFTAddress, metadataAddress)
+	return replaceAddresses(code, nftAddress, ModernMusicianNFTAddress, metadataAddress)
 }
 
 // GenerateGetCollectionLengthScript creates a script that retrieves an NFT collection
 // from storage and tries to borrow a reference for an NFT that it owns.
 // If it owns it, it will not fail.
-func GenerateGetCollectionLengthScript(nftAddress, exampleNFTAddress flow.Address) []byte {
+func GenerateGetCollectionLengthScript(nftAddress, ModernMusicianNFTAddress flow.Address) []byte {
 	code := assets.MustAssetString(filenameGetCollectionLength)
-	return replaceAddresses(code, nftAddress, exampleNFTAddress, flow.EmptyAddress)
+	return replaceAddresses(code, nftAddress, ModernMusicianNFTAddress, flow.EmptyAddress)
 }
 
 // GenerateGetTotalSupplyScript creates a script that reads
 // the total supply of tokens in existence
 // and makes assertions about the number
-func GenerateGetTotalSupplyScript(nftAddress, exampleNFTAddress flow.Address) []byte {
+func GenerateGetTotalSupplyScript(nftAddress, ModernMusicianNFTAddress flow.Address) []byte {
 	code := assets.MustAssetString(filenameGetTotalSupply)
-	return replaceAddresses(code, nftAddress, exampleNFTAddress, flow.EmptyAddress)
+	return replaceAddresses(code, nftAddress, ModernMusicianNFTAddress, flow.EmptyAddress)
 }

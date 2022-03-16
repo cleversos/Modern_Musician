@@ -42,24 +42,24 @@ Users typically save new collections to a well-known location in their account
 and link the `NonFungibleToken.CollectionPublic` interface as a public capability.
 
 ```swift
-let collection <- ExampleNFT.createEmptyCollection()
+let collection <- ModernMusicianNFT.createEmptyCollection()
 
-account.save(<-collection, to: /storage/ExampleNFTCollection)
+account.save(<-collection, to: /storage/ModernMusicianNFTCollection)
 
 // create a public capability for the collection
 account.link<&{NonFungibleToken.CollectionPublic}>(
-    /public/ExampleNFTCollection,
-    target: /storage/ExampleNFTCollection
+    /public/ModernMusicianNFTCollection,
+    target: /storage/ModernMusicianNFTCollection
 )
 ```
 
 ### Withdraw an NFT
 
-Withdraw an `NFT` from a `Collection` using the [`withdraw`](contracts/ExampleNFT.cdc#L36-L42) function.
-This function emits the [`Withdraw`](contracts/ExampleNFT.cdc#L12) event.
+Withdraw an `NFT` from a `Collection` using the [`withdraw`](contracts/ModernMusicianNFT.cdc#L36-L42) function.
+This function emits the [`Withdraw`](contracts/ModernMusicianNFT.cdc#L12) event.
 
 ```swift
-let collectionRef = account.borrow<&ExampleNFT.Collection>(from: /storage/ExampleNFTCollection)
+let collectionRef = account.borrow<&ModernMusicianNFT.Collection>(from: /storage/ModernMusicianNFTCollection)
     ?? panic("Could not borrow a reference to the owner's collection")
 
 // withdraw the NFT from the owner's collection
@@ -68,8 +68,8 @@ let nft <- collectionRef.withdraw(withdrawID: 42)
 
 ### Deposit an NFT
 
-Deposit an `NFT` into a `Collection` using the [`deposit`](contracts/ExampleNFT.cdc#L46-L57) function.
-This function emits the [`Deposit`](contracts/ExampleNFT.cdc#L13) event.
+Deposit an `NFT` into a `Collection` using the [`deposit`](contracts/ModernMusicianNFT.cdc#L46-L57) function.
+This function emits the [`Deposit`](contracts/ModernMusicianNFT.cdc#L13) event.
 
 This function is available on the `NonFungibleToken.CollectionPublic` interface,
 which accounts publish as public capability.
@@ -77,11 +77,11 @@ This capability allows anybody to deposit an NFT into a collection
 without accessing the entire collection.
 
 ```swift
-let nft: ExampleNFT.NFT
+let nft: ModernMusicianNFT.NFT
 
 // ...
 
-let collection = account.getCapability(/public/ExampleNFTCollection)
+let collection = account.getCapability(/public/ModernMusicianNFTCollection)
     .borrow<&{NonFungibleToken.CollectionPublic}>()
     ?? panic("Could not borrow a reference to the receiver's collection")
 
@@ -97,18 +97,18 @@ In an implementation, you MUST cast the `token` as your specific token type befo
 deposit another token type into your collection. For example:
 
 ```swift
-let token <- token as! @ExampleNFT.NFT
+let token <- token as! @ModernMusicianNFT.NFT
 ```
 
 ### List NFTs in an account
 
-Return a list of NFTs in a `Collection` using the [`getIDs`](contracts/ExampleNFT.cdc#L59-L62) function.
+Return a list of NFTs in a `Collection` using the [`getIDs`](contracts/ModernMusicianNFT.cdc#L59-L62) function.
 
 This function is available on the `NonFungibleToken.CollectionPublic` interface,
 which accounts publish as public capability.
 
 ```swift
-let collection = account.getCapability(/public/ExampleNFTCollection)
+let collection = account.getCapability(/public/ModernMusicianNFTCollection)
     .borrow<&{NonFungibleToken.CollectionPublic}>()
     ?? panic("Could not borrow a reference to the receiver's collection")
 
@@ -135,16 +135,16 @@ including the name, description, image and owner.
 **Source: [get_nft_metadata.cdc](transactions/scripts/get_nft_metadata.cdc)**
 
 ```swift
-import ExampleNFT from "..."
+import ModernMusicianNFT from "..."
 import MetadataViews from "..."
 
 // ...
 
-let collection = account.getCapability(ExampleNFT.CollectionPublicPath)
-    .borrow<&{ExampleNFT.ExampleNFTCollectionPublic}>()
+let collection = account.getCapability(ModernMusicianNFT.CollectionPublicPath)
+    .borrow<&{ModernMusicianNFT.ModernMusicianNFTCollectionPublic}>()
     ?? panic("Could not borrow a reference to the collection")
 
-let nft = collection.borrowExampleNFT(id: 42)
+let nft = collection.borrowModernMusicianNFT(id: 42)
 
 if let view = nft.resolveView(Type<MetadataViews.Display>()) {
     let display = view as! MetadataViews.Display
@@ -160,12 +160,12 @@ let owner: Address = nft.owner!.address!
 // Inspect the type of this NFT to verify its origin
 let nftType = nft.getType()
 
-// `nftType.identifier` is `A.f3fcd2c1a78f5eee.ExampleNFT.NFT`
+// `nftType.identifier` is `A.f3fcd2c1a78f5eee.ModernMusicianNFT.NFT`
 ```
 
 ### How to implement metadata
 
-The [example NFT contract](contracts/ExampleNFT.cdc) shows how to implement metadata views.
+The [example NFT contract](contracts/ModernMusicianNFT.cdc) shows how to implement metadata views.
 
 ### List of common views
 
@@ -220,7 +220,7 @@ or with the [Visual Studio Code Extension](https://github.com/onflow/flow/blob/m
 The steps to follow are:
 
 1. Deploy `NonFungibleToken.cdc`
-2. Deploy `ExampleNFT.cdc`, importing `NonFungibleToken` from the address you deployed it to.
+2. Deploy `ModernMusicianNFT.cdc`, importing `NonFungibleToken` from the address you deployed it to.
 
 Then you can experiment with some of the other transactions and scripts in `transactions/`
 or even write your own. You'll need to replace some of the import address placeholders with addresses that you deploy to, as well as some of the transaction arguments.
@@ -264,7 +264,7 @@ You can find automated tests in the `lib/go/test/nft_test.go` file. It uses the 
 
 The works in these files:
 
-- [ExampleNFT.cdc](contracts/ExampleNFT.cdc)
+- [ModernMusicianNFT.cdc](contracts/ModernMusicianNFT.cdc)
 - [NonFungibleToken.cdc](contracts/NonFungibleToken.cdc)
 
 are under the [Unlicense](LICENSE).

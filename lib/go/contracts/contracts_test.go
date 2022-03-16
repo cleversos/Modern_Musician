@@ -17,12 +17,12 @@ func TestNonFungibleTokenContract(t *testing.T) {
 	assert.NotNil(t, contract)
 }
 
-func TestExampleNFTContract(t *testing.T) {
+func TestModernMusicianNFTContract(t *testing.T) {
 	addresses := test.AddressGenerator()
 	addressA := addresses.New()
 	addressB := addresses.New()
 
-	contract := contracts.ExampleNFT(addressA, addressB)
+	contract := contracts.ModernMusicianNFT(addressA, addressB)
 	assert.NotNil(t, contract)
 
 	assert.Contains(t, string(contract), addressA.String())

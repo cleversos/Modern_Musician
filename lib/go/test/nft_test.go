@@ -23,8 +23,8 @@ func TestNFTDeployment(t *testing.T) {
 
 	_ = deploy(
 		t, b, 
-		"ExampleNFT", 
-		contracts.ExampleNFT(nftAddress, metadataAddress),
+		"ModernMusicianNFT", 
+		contracts.ModernMusicianNFT(nftAddress, metadataAddress),
 	)
 }
 
@@ -36,29 +36,29 @@ func TestCreateNFT(t *testing.T) {
 
 	accountKeys := test.AccountKeyGenerator()
 
-	exampleNFTAccountKey, exampleNFTSigner := accountKeys.NewWithSigner()
-	exampleNFTAddress := deploy(
+	ModernMusicianNFTAccountKey, ModernMusicianNFTSigner := accountKeys.NewWithSigner()
+	ModernMusicianNFTAddress := deploy(
 		t, b, 
-		"ExampleNFT", 
-		contracts.ExampleNFT(nftAddress, metadataAddress), 
-		exampleNFTAccountKey,
+		"ModernMusicianNFT", 
+		contracts.ModernMusicianNFT(nftAddress, metadataAddress), 
+		ModernMusicianNFTAccountKey,
 	)
 
-	script := templates.GenerateGetTotalSupplyScript(nftAddress, exampleNFTAddress)
+	script := templates.GenerateGetTotalSupplyScript(nftAddress, ModernMusicianNFTAddress)
 	supply := executeScriptAndCheck(t, b, script, nil)
 	assert.Equal(t, cadence.NewUInt64(0), supply)
 
-	script = templates.GenerateGetCollectionLengthScript(nftAddress, exampleNFTAddress)
-	length := executeScriptAndCheck(t, b, script, [][]byte{jsoncdc.MustEncode(cadence.NewAddress(exampleNFTAddress))})
+	script = templates.GenerateGetCollectionLengthScript(nftAddress, ModernMusicianNFTAddress)
+	length := executeScriptAndCheck(t, b, script, [][]byte{jsoncdc.MustEncode(cadence.NewAddress(ModernMusicianNFTAddress))})
 	assert.Equal(t, cadence.NewInt(0), length)
 
 	t.Run("Should be able to mint a token", func(t *testing.T) {
 
-		script := templates.GenerateMintNFTScript(nftAddress, exampleNFTAddress)
+		script := templates.GenerateMintNFTScript(nftAddress, ModernMusicianNFTAddress)
 
-		tx := createTxWithTemplateAndAuthorizer(b, script, exampleNFTAddress)
+		tx := createTxWithTemplateAndAuthorizer(b, script, ModernMusicianNFTAddress)
 		
-		tx.AddArgument(cadence.NewAddress(exampleNFTAddress))
+		tx.AddArgument(cadence.NewAddress(ModernMusicianNFTAddress))
 		tx.AddArgument(cadence.String("Example NFT 0"))
 		tx.AddArgument(cadence.String("This is an example NFT"))
 		tx.AddArgument(cadence.String("example.jpeg"))
@@ -67,41 +67,41 @@ func TestCreateNFT(t *testing.T) {
 			t, b, tx,
 			[]flow.Address{
 				b.ServiceKey().Address,
-				exampleNFTAddress,
+				ModernMusicianNFTAddress,
 			},
 			[]crypto.Signer{
 				b.ServiceKey().Signer(),
-				exampleNFTSigner,
+				ModernMusicianNFTSigner,
 			},
 			false,
 		)
 
-		script = templates.GenerateBorrowNFTScript(nftAddress, exampleNFTAddress)
+		script = templates.GenerateBorrowNFTScript(nftAddress, ModernMusicianNFTAddress)
 		executeScriptAndCheck(
 			t, b,
 			script,
 			[][]byte{
-				jsoncdc.MustEncode(cadence.NewAddress(exampleNFTAddress)),
+				jsoncdc.MustEncode(cadence.NewAddress(ModernMusicianNFTAddress)),
 				jsoncdc.MustEncode(cadence.NewUInt64(0)),
 			},
 		)
 
-		script = templates.GenerateGetTotalSupplyScript(nftAddress, exampleNFTAddress)
+		script = templates.GenerateGetTotalSupplyScript(nftAddress, ModernMusicianNFTAddress)
 		supply := executeScriptAndCheck(t, b, script, nil)
 		assert.Equal(t, cadence.NewUInt64(1), supply)
 
-		script = templates.GenerateGetCollectionLengthScript(nftAddress, exampleNFTAddress)
-		length := executeScriptAndCheck(t, b, script, [][]byte{jsoncdc.MustEncode(cadence.NewAddress(exampleNFTAddress))})
+		script = templates.GenerateGetCollectionLengthScript(nftAddress, ModernMusicianNFTAddress)
+		length := executeScriptAndCheck(t, b, script, [][]byte{jsoncdc.MustEncode(cadence.NewAddress(ModernMusicianNFTAddress))})
 		assert.Equal(t, cadence.NewInt(1), length)
 	})
 
 	t.Run("Shouldn't be able to borrow a reference to an NFT that doesn't exist", func(t *testing.T) {
-		script = templates.GenerateBorrowNFTScript(nftAddress, exampleNFTAddress)
+		script = templates.GenerateBorrowNFTScript(nftAddress, ModernMusicianNFTAddress)
 
 		result, err := b.ExecuteScript(
 			script,
 			[][]byte{
-				jsoncdc.MustEncode(cadence.NewAddress(exampleNFTAddress)),
+				jsoncdc.MustEncode(cadence.NewAddress(ModernMusicianNFTAddress)),
 				jsoncdc.MustEncode(cadence.NewUInt64(5)),
 			},
 		)
@@ -119,19 +119,19 @@ func TestTransferNFT(t *testing.T) {
 
 	accountKeys := test.AccountKeyGenerator()
 
-	exampleNFTAccountKey, exampleNFTSigner := accountKeys.NewWithSigner()
-	exampleNFTAddress := deploy(
+	ModernMusicianNFTAccountKey, ModernMusicianNFTSigner := accountKeys.NewWithSigner()
+	ModernMusicianNFTAddress := deploy(
 		t, b, 
-		"ExampleNFT", 
-		contracts.ExampleNFT(nftAddress, metadataAddress), 
-		exampleNFTAccountKey,
+		"ModernMusicianNFT", 
+		contracts.ModernMusicianNFT(nftAddress, metadataAddress), 
+		ModernMusicianNFTAccountKey,
 	)
 
 	joshAccountKey, joshSigner := accountKeys.NewWithSigner()
 	joshAddress, err := b.CreateAccount([]*flow.AccountKey{joshAccountKey}, nil)
 	require.NoError(t, err)
 
-	script := templates.GenerateMintNFTScript(nftAddress, exampleNFTAddress)
+	script := templates.GenerateMintNFTScript(nftAddress, ModernMusicianNFTAddress)
 
 	tx := flow.NewTransaction().
 		SetScript(script).
@@ -142,9 +142,9 @@ func TestTransferNFT(t *testing.T) {
 			b.ServiceKey().SequenceNumber,
 		).
 		SetPayer(b.ServiceKey().Address).
-		AddAuthorizer(exampleNFTAddress)
+		AddAuthorizer(ModernMusicianNFTAddress)
 
-	tx.AddArgument(cadence.NewAddress(exampleNFTAddress))
+	tx.AddArgument(cadence.NewAddress(ModernMusicianNFTAddress))
 	tx.AddArgument(cadence.String("Example NFT 0"))
 	tx.AddArgument(cadence.String("This is an example NFT"))
 	tx.AddArgument(cadence.String("example.jpeg"))
@@ -153,11 +153,11 @@ func TestTransferNFT(t *testing.T) {
 		t, b, tx,
 		[]flow.Address{
 			b.ServiceKey().Address,
-			exampleNFTAddress,
+			ModernMusicianNFTAddress,
 		},
 		[]crypto.Signer{
 			b.ServiceKey().Signer(),
-			exampleNFTSigner,
+			ModernMusicianNFTSigner,
 		},
 		false,
 	)
@@ -165,7 +165,7 @@ func TestTransferNFT(t *testing.T) {
 	// create a new Collection
 	t.Run("Should be able to create a new empty NFT Collection", func(t *testing.T) {
 
-		script := templates.GenerateSetupAccountScript(nftAddress, exampleNFTAddress)
+		script := templates.GenerateSetupAccountScript(nftAddress, ModernMusicianNFTAddress)
 		tx := createTxWithTemplateAndAuthorizer(b, script, joshAddress)
 
 		signAndSubmit(
@@ -181,15 +181,15 @@ func TestTransferNFT(t *testing.T) {
 			false,
 		)
 
-		script = templates.GenerateGetCollectionLengthScript(nftAddress, exampleNFTAddress)
+		script = templates.GenerateGetCollectionLengthScript(nftAddress, ModernMusicianNFTAddress)
 		length := executeScriptAndCheck(t, b, script, [][]byte{jsoncdc.MustEncode(cadence.NewAddress(joshAddress))})
 		assert.Equal(t, cadence.NewInt(0), length)
 	})
 
 	t.Run("Shouldn't be able to withdraw an NFT that doesn't exist in a collection", func(t *testing.T) {
 
-		script := templates.GenerateTransferNFTScript(nftAddress, exampleNFTAddress)
-		tx := createTxWithTemplateAndAuthorizer(b, script, exampleNFTAddress)
+		script := templates.GenerateTransferNFTScript(nftAddress, ModernMusicianNFTAddress)
+		tx := createTxWithTemplateAndAuthorizer(b, script, ModernMusicianNFTAddress)
 
 		tx.AddArgument(cadence.NewAddress(joshAddress))
 		tx.AddArgument(cadence.NewUInt64(3))
@@ -198,28 +198,28 @@ func TestTransferNFT(t *testing.T) {
 			t, b, tx,
 			[]flow.Address{
 				b.ServiceKey().Address,
-				exampleNFTAddress,
+				ModernMusicianNFTAddress,
 			},
 			[]crypto.Signer{
 				b.ServiceKey().Signer(),
-				exampleNFTSigner,
+				ModernMusicianNFTSigner,
 			},
 			true,
 		)
 
-		script = templates.GenerateGetCollectionLengthScript(nftAddress, exampleNFTAddress)
+		script = templates.GenerateGetCollectionLengthScript(nftAddress, ModernMusicianNFTAddress)
 		length := executeScriptAndCheck(t, b, script, [][]byte{jsoncdc.MustEncode(cadence.NewAddress(joshAddress))})
 		assert.Equal(t, cadence.NewInt(0), length)
 
-		script = templates.GenerateGetCollectionLengthScript(nftAddress, exampleNFTAddress)
-		length = executeScriptAndCheck(t, b, script, [][]byte{jsoncdc.MustEncode(cadence.NewAddress(exampleNFTAddress))})
+		script = templates.GenerateGetCollectionLengthScript(nftAddress, ModernMusicianNFTAddress)
+		length = executeScriptAndCheck(t, b, script, [][]byte{jsoncdc.MustEncode(cadence.NewAddress(ModernMusicianNFTAddress))})
 		assert.Equal(t, cadence.NewInt(1), length)
 	})
 
 	// transfer an NFT
 	t.Run("Should be able to withdraw an NFT and deposit to another accounts collection", func(t *testing.T) {
-		script := templates.GenerateTransferNFTScript(nftAddress, exampleNFTAddress)
-		tx := createTxWithTemplateAndAuthorizer(b, script, exampleNFTAddress)
+		script := templates.GenerateTransferNFTScript(nftAddress, ModernMusicianNFTAddress)
+		tx := createTxWithTemplateAndAuthorizer(b, script, ModernMusicianNFTAddress)
 
 		tx.AddArgument(cadence.NewAddress(joshAddress))
 		tx.AddArgument(cadence.NewUInt64(0))
@@ -228,16 +228,16 @@ func TestTransferNFT(t *testing.T) {
 			t, b, tx,
 			[]flow.Address{
 				b.ServiceKey().Address,
-				exampleNFTAddress,
+				ModernMusicianNFTAddress,
 			},
 			[]crypto.Signer{
 				b.ServiceKey().Signer(),
-				exampleNFTSigner,
+				ModernMusicianNFTSigner,
 			},
 			false,
 		)
 
-		script = templates.GenerateBorrowNFTScript(nftAddress, exampleNFTAddress)
+		script = templates.GenerateBorrowNFTScript(nftAddress, ModernMusicianNFTAddress)
 		executeScriptAndCheck(
 			t, b,
 			script,
@@ -247,19 +247,19 @@ func TestTransferNFT(t *testing.T) {
 			},
 		)
 
-		script = templates.GenerateGetCollectionLengthScript(nftAddress, exampleNFTAddress)
+		script = templates.GenerateGetCollectionLengthScript(nftAddress, ModernMusicianNFTAddress)
 		length := executeScriptAndCheck(t, b, script, [][]byte{jsoncdc.MustEncode(cadence.NewAddress(joshAddress))})
 		assert.Equal(t, cadence.NewInt(1), length)
 
-		script = templates.GenerateGetCollectionLengthScript(nftAddress, exampleNFTAddress)
-		length = executeScriptAndCheck(t, b, script, [][]byte{jsoncdc.MustEncode(cadence.NewAddress(exampleNFTAddress))})
+		script = templates.GenerateGetCollectionLengthScript(nftAddress, ModernMusicianNFTAddress)
+		length = executeScriptAndCheck(t, b, script, [][]byte{jsoncdc.MustEncode(cadence.NewAddress(ModernMusicianNFTAddress))})
 		assert.Equal(t, cadence.NewInt(0), length)
 	})
 
 	// transfer an NFT
 	t.Run("Should be able to withdraw an NFT and destroy it, not reducing the supply", func(t *testing.T) {
 
-		script := templates.GenerateDestroyNFTScript(nftAddress, exampleNFTAddress)
+		script := templates.GenerateDestroyNFTScript(nftAddress, ModernMusicianNFTAddress)
 
 		tx := createTxWithTemplateAndAuthorizer(b, script, joshAddress)
 
@@ -278,15 +278,15 @@ func TestTransferNFT(t *testing.T) {
 			false,
 		)
 
-		script = templates.GenerateGetCollectionLengthScript(nftAddress, exampleNFTAddress)
+		script = templates.GenerateGetCollectionLengthScript(nftAddress, ModernMusicianNFTAddress)
 		length := executeScriptAndCheck(t, b, script, [][]byte{jsoncdc.MustEncode(cadence.NewAddress(joshAddress))})
 		assert.Equal(t, cadence.NewInt(0), length)
 
-		script = templates.GenerateGetCollectionLengthScript(nftAddress, exampleNFTAddress)
-		length = executeScriptAndCheck(t, b, script, [][]byte{jsoncdc.MustEncode(cadence.NewAddress(exampleNFTAddress))})
+		script = templates.GenerateGetCollectionLengthScript(nftAddress, ModernMusicianNFTAddress)
+		length = executeScriptAndCheck(t, b, script, [][]byte{jsoncdc.MustEncode(cadence.NewAddress(ModernMusicianNFTAddress))})
 		assert.Equal(t, cadence.NewInt(0), length)
 
-		script = templates.GenerateGetTotalSupplyScript(nftAddress, exampleNFTAddress)
+		script = templates.GenerateGetTotalSupplyScript(nftAddress, ModernMusicianNFTAddress)
 		supply := executeScriptAndCheck(t, b, script, nil)
 		assert.Equal(t, cadence.NewUInt64(1), supply)
 	})

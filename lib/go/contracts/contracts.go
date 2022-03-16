@@ -19,7 +19,7 @@ var (
 
 const (
 	filenameNonFungibleToken = "NonFungibleToken.cdc"
-	filenameExampleNFT       = "ExampleNFT.cdc"
+	filenameModernMusicianNFT       = "ModernMusicianNFT.cdc"
 	filenameMetadataViews    = "MetadataViews.cdc"
 )
 
@@ -28,11 +28,11 @@ func NonFungibleToken() []byte {
 	return assets.MustAsset(filenameNonFungibleToken)
 }
 
-// ExampleNFT returns the ExampleNFT contract.
+// ModernMusicianNFT returns the ModernMusicianNFT contract.
 //
 // The returned contract will import the NonFungibleToken contract from the specified address.
-func ExampleNFT(nftAddress, metadataAddress flow.Address) []byte {
-	code := assets.MustAssetString(filenameExampleNFT)
+func ModernMusicianNFT(nftAddress, metadataAddress flow.Address) []byte {
+	code := assets.MustAssetString(filenameModernMusicianNFT)
 
 	code = placeholderNonFungibleToken.ReplaceAllString(code, "0x"+nftAddress.String())
 	code = placeholderMetadataViews.ReplaceAllString(code, "0x"+metadataAddress.String())

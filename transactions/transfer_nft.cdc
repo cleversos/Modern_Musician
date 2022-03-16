@@ -1,5 +1,5 @@
 import NonFungibleToken from "../contracts/NonFungibleToken.cdc"
-import ExampleNFT from "../contracts/ExampleNFT.cdc"
+import ModernMusicianNFT from "../contracts/ModernMusicianNFT.cdc"
 
 // This transaction is for transferring and NFT from
 // one account to another
@@ -12,12 +12,12 @@ transaction(recipient: Address, withdrawID: UInt64) {
 
         // borrow a reference to the signer's NFT collection
         let collectionRef = signer
-            .borrow<&ExampleNFT.Collection>(from: ExampleNFT.CollectionStoragePath)
+            .borrow<&ModernMusicianNFT.Collection>(from: ModernMusicianNFT.CollectionStoragePath)
             ?? panic("Could not borrow a reference to the owner's collection")
 
         // borrow a public reference to the receivers collection
         let depositRef = recipient
-            .getCapability(ExampleNFT.CollectionPublicPath)
+            .getCapability(ModernMusicianNFT.CollectionPublicPath)
             .borrow<&{NonFungibleToken.CollectionPublic}>()
             ?? panic("Could not borrow a reference to the receiver's collection")
 

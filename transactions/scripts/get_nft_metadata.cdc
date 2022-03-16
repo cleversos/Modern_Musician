@@ -1,4 +1,4 @@
-import ExampleNFT from "../../contracts/ExampleNFT.cdc"
+import ModernMusicianNFT from "../../contracts/ModernMusicianNFT.cdc"
 import MetadataViews from "./MetadataViews.cdc"
 
 pub struct NFT {
@@ -27,11 +27,11 @@ pub fun main(address: Address, id: UInt64): NFT {
     let account = getAccount(address)
 
     let collection = account
-        .getCapability(ExampleNFT.CollectionPublicPath)
-        .borrow<&{ExampleNFT.ExampleNFTCollectionPublic}>()
+        .getCapability(ModernMusicianNFT.CollectionPublicPath)
+        .borrow<&{ModernMusicianNFT.ModernMusicianNFTCollectionPublic}>()
         ?? panic("Could not borrow a reference to the collection")
 
-    let nft = collection.borrowExampleNFT(id: id)!
+    let nft = collection.borrowModernMusicianNFT(id: id)!
 
     // Get the basic display information for this NFT
     let view = nft.resolveView(Type<MetadataViews.Display>())!

@@ -23,17 +23,17 @@ func TestGetNFTMetadata(t *testing.T) {
 
 	accountKeys := test.AccountKeyGenerator()
 
-	exampleNFTAccountKey, exampleNFTSigner := accountKeys.NewWithSigner()
-	exampleNFTAddress := deploy(
+	ModernMusicianNFTAccountKey, ModernMusicianNFTSigner := accountKeys.NewWithSigner()
+	ModernMusicianNFTAddress := deploy(
 		t, b, 
-		"ExampleNFT", 
-		contracts.ExampleNFT(nftAddress, metadataAddress), 
-		exampleNFTAccountKey,
+		"ModernMusicianNFT", 
+		contracts.ModernMusicianNFT(nftAddress, metadataAddress), 
+		ModernMusicianNFTAccountKey,
 	)
 
-	script := templates.GenerateMintNFTScript(nftAddress, exampleNFTAddress)
+	script := templates.GenerateMintNFTScript(nftAddress, ModernMusicianNFTAddress)
 
-	tx := createTxWithTemplateAndAuthorizer(b, script, exampleNFTAddress)
+	tx := createTxWithTemplateAndAuthorizer(b, script, ModernMusicianNFTAddress)
 
 	const (
 		name = "Example NFT 0"
@@ -41,7 +41,7 @@ func TestGetNFTMetadata(t *testing.T) {
 		thumbnail = "example.jpeg"
 	)
 	
-	tx.AddArgument(cadence.NewAddress(exampleNFTAddress))
+	tx.AddArgument(cadence.NewAddress(ModernMusicianNFTAddress))
 	tx.AddArgument(cadence.String(name))
 	tx.AddArgument(cadence.String(description))
 	tx.AddArgument(cadence.String(thumbnail))
@@ -50,32 +50,32 @@ func TestGetNFTMetadata(t *testing.T) {
 		t, b, tx,
 		[]flow.Address{
 			b.ServiceKey().Address,
-			exampleNFTAddress,
+			ModernMusicianNFTAddress,
 		},
 		[]crypto.Signer{
 			b.ServiceKey().Signer(),
-			exampleNFTSigner,
+			ModernMusicianNFTSigner,
 		},
 		false,
 	)
 
-	script = templates.GenerateGetNFTMetadataScript(nftAddress, exampleNFTAddress, metadataAddress)
+	script = templates.GenerateGetNFTMetadataScript(nftAddress, ModernMusicianNFTAddress, metadataAddress)
 	result := executeScriptAndCheck(
 		t, b,
 		script,
 		[][]byte{
-			jsoncdc.MustEncode(cadence.NewAddress(exampleNFTAddress)),
+			jsoncdc.MustEncode(cadence.NewAddress(ModernMusicianNFTAddress)),
 			jsoncdc.MustEncode(cadence.NewUInt64(0)),
 		},
 	)
 
 	nftResult := result.(cadence.Struct)
 
-	nftType := fmt.Sprintf("A.%s.ExampleNFT.NFT", exampleNFTAddress)
+	nftType := fmt.Sprintf("A.%s.ModernMusicianNFT.NFT", ModernMusicianNFTAddress)
 
 	assert.Equal(t, cadence.String(name), nftResult.Fields[0])
 	assert.Equal(t, cadence.String(description), nftResult.Fields[1])
 	assert.Equal(t, cadence.String(thumbnail), nftResult.Fields[2])
-	assert.Equal(t, cadence.NewAddress(exampleNFTAddress), nftResult.Fields[3])
+	assert.Equal(t, cadence.NewAddress(ModernMusicianNFTAddress), nftResult.Fields[3])
 	assert.Equal(t, cadence.String(nftType), nftResult.Fields[4])
 }

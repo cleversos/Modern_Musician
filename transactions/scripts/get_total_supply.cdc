@@ -1,5 +1,5 @@
-import ExampleNFT from "../../contracts/ExampleNFT.cdc"
+import ModernMusicianNFT from "../../contracts/ModernMusicianNFT.cdc"
 
 pub fun main(): UInt64 {
-    return ExampleNFT.totalSupply
+    return ModernMusicianNFT.totalSupply
 }

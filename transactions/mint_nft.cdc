@@ -1,5 +1,5 @@
 import NonFungibleToken from "../contracts/NonFungibleToken.cdc"
-import ExampleNFT from "../contracts/ExampleNFT.cdc"
+import ModernMusicianNFT from "../contracts/ModernMusicianNFT.cdc"
 
 // This script uses the NFTMinter resource to mint a new NFT
 // It must be run with the account that has the minter resource
@@ -13,18 +13,18 @@ transaction(
 ) {
 
     // local variable for storing the minter reference
-    let minter: &ExampleNFT.NFTMinter
+    let minter: &ModernMusicianNFT.NFTMinter
 
     prepare(signer: AuthAccount) {
         // borrow a reference to the NFTMinter resource in storage
-        self.minter = signer.borrow<&ExampleNFT.NFTMinter>(from: ExampleNFT.MinterStoragePath)
+        self.minter = signer.borrow<&ModernMusicianNFT.NFTMinter>(from: ModernMusicianNFT.MinterStoragePath)
             ?? panic("Could not borrow a reference to the NFT minter")
     }
 
     execute {
         // Borrow the recipient's public NFT collection reference
         let receiver = getAccount(recipient)
-            .getCapability(ExampleNFT.CollectionPublicPath)
+            .getCapability(ModernMusicianNFT.CollectionPublicPath)
             .borrow<&{NonFungibleToken.CollectionPublic}>()
             ?? panic("Could not get receiver reference to the NFT Collection")
 

@@ -5,7 +5,7 @@
 import NonFungibleToken from "./NonFungibleToken.cdc"
 import MetadataViews from "./MetadataViews.cdc"
 
-pub contract ExampleNFT: NonFungibleToken {
+pub contract ModernMusicianNFT: NonFungibleToken {
 
     pub var totalSupply: UInt64
 
@@ -58,19 +58,19 @@ pub contract ExampleNFT: NonFungibleToken {
         }
     }
 
-    pub resource interface ExampleNFTCollectionPublic {
+    pub resource interface ModernMusicianNFTCollectionPublic {
         pub fun deposit(token: @NonFungibleToken.NFT)
         pub fun getIDs(): [UInt64]
         pub fun borrowNFT(id: UInt64): &NonFungibleToken.NFT
-        pub fun borrowExampleNFT(id: UInt64): &ExampleNFT.NFT? {
+        pub fun borrowModernMusicianNFT(id: UInt64): &ModernMusicianNFT.NFT? {
             post {
                 (result == nil) || (result?.id == id):
-                    "Cannot borrow ExampleNFT reference: the ID of the returned reference is incorrect"
+                    "Cannot borrow ModernMusicianNFT reference: the ID of the returned reference is incorrect"
             }
         }
     }
 
-    pub resource Collection: ExampleNFTCollectionPublic, NonFungibleToken.Provider, NonFungibleToken.Receiver, NonFungibleToken.CollectionPublic, MetadataViews.ResolverCollection {
+    pub resource Collection: ModernMusicianNFTCollectionPublic, NonFungibleToken.Provider, NonFungibleToken.Receiver, NonFungibleToken.CollectionPublic, MetadataViews.ResolverCollection {
         // dictionary of NFT conforming tokens
         // NFT is a resource type with an `UInt64` ID field
         pub var ownedNFTs: @{UInt64: NonFungibleToken.NFT}
@@ -91,7 +91,7 @@ pub contract ExampleNFT: NonFungibleToken {
         // deposit takes a NFT and adds it to the collections dictionary
         // and adds the ID to the id array
         pub fun deposit(token: @NonFungibleToken.NFT) {
-            let token <- token as! @ExampleNFT.NFT
+            let token <- token as! @ModernMusicianNFT.NFT
 
             let id: UInt64 = token.id
 
@@ -114,11 +114,11 @@ pub contract ExampleNFT: NonFungibleToken {
             return &self.ownedNFTs[id] as &NonFungibleToken.NFT
         }
  
-        pub fun borrowExampleNFT(id: UInt64): &ExampleNFT.NFT? {
+        pub fun borrowModernMusicianNFT(id: UInt64): &ModernMusicianNFT.NFT? {
             if self.ownedNFTs[id] != nil {
                 // Create an authorized reference to allow downcasting
                 let ref = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT
-                return ref as! &ExampleNFT.NFT
+                return ref as! &ModernMusicianNFT.NFT
             }
 
             return nil
@@ -126,8 +126,8 @@ pub contract ExampleNFT: NonFungibleToken {
 
         pub fun borrowViewResolver(id: UInt64): &AnyResource{MetadataViews.Resolver} {
             let nft = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT
-            let exampleNFT = nft as! &ExampleNFT.NFT
-            return exampleNFT as &AnyResource{MetadataViews.Resolver}
+            let ModernMusicianNFT = nft as! &ModernMusicianNFT.NFT
+            return ModernMusicianNFT as &AnyResource{MetadataViews.Resolver}
         }
 
         destroy() {
@@ -156,7 +156,7 @@ pub contract ExampleNFT: NonFungibleToken {
 
             // create a new NFT
             var newNFT <- create NFT(
-                id: ExampleNFT.totalSupply,
+                id: ModernMusicianNFT.totalSupply,
                 name: name,
                 description: description,
                 thumbnail: thumbnail,
@@ -165,7 +165,7 @@ pub contract ExampleNFT: NonFungibleToken {
             // deposit it in the recipient's account using their reference
             recipient.deposit(token: <-newNFT)
 
-            ExampleNFT.totalSupply = ExampleNFT.totalSupply + UInt64(1)
+            ModernMusicianNFT.totalSupply = ModernMusicianNFT.totalSupply + UInt64(1)
         }
     }
 
@@ -174,16 +174,16 @@ pub contract ExampleNFT: NonFungibleToken {
         self.totalSupply = 0
 
         // Set the named paths
-        self.CollectionStoragePath = /storage/exampleNFTCollection
-        self.CollectionPublicPath = /public/exampleNFTCollection
-        self.MinterStoragePath = /storage/exampleNFTMinter
+        self.CollectionStoragePath = /storage/ModernMusicianNFTCollection
+        self.CollectionPublicPath = /public/ModernMusicianNFTCollection
+        self.MinterStoragePath = /storage/ModernMusicianNFTMinter
 
         // Create a Collection resource and save it to storage
         let collection <- create Collection()
         self.account.save(<-collection, to: self.CollectionStoragePath)
 
         // create a public capability for the collection
-        self.account.link<&ExampleNFT.Collection{NonFungibleToken.CollectionPublic, ExampleNFT.ExampleNFTCollectionPublic}>(
+        self.account.link<&ModernMusicianNFT.Collection{NonFungibleToken.CollectionPublic, ModernMusicianNFT.ModernMusicianNFTCollectionPublic}>(
             self.CollectionPublicPath,
             target: self.CollectionStoragePath
         )
